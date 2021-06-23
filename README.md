@@ -3,13 +3,11 @@
 
 ## 工具使用
 ```bash
-git clone https://github.com/yanmengfei/ginhelper.git
-cd ginhelper
-go install
+go get -u github.com/yanmengfei/ginhelper
 ginhelper --name newpro --output /home/yanmengfei/opensource
 ```
 
-## 生成项目说明
+## 结构说明
 ```
 ├── docker-compose.local.yaml    // 本地docker启动 docker-compose -f docker-compose.local.yaml up
 ├── docker-compose.yaml  // 镜像启动 docker-compose up
@@ -54,7 +52,7 @@ ginhelper --name newpro --output /home/yanmengfei/opensource
             └── sentry.go
 ```
 
-## 生成项目维护
+## 开发维护
 以下文件夹内，每个对象新建一个文件，其他文件夹
   - schemas
   - core
