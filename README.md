@@ -1,5 +1,15 @@
 # ginhelper
 
+
+## 使用
+```bash
+git clone https://github.com/yanmengfei/ginhelper.git
+cd ginhelper
+go install
+ginhelper --name newpro --output /home/yanmengfei/opensource
+```
+
+## 文件夹说明
 ```
 ├── docker-compose.local.yaml    // 本地docker启动 docker-compose -f docker-compose.local.yaml up
 ├── docker-compose.yaml  // 镜像启动 docker-compose up
@@ -44,8 +54,10 @@
             └── sentry.go
 ```
 
-以下文件夹内，每个路由组新建一个文件
+## 项目维护
+以下文件夹内，每个对象新建一个文件，其他文件夹
   - schemas
   - core
   - api
   - routers
+  - models
