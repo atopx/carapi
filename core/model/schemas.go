@@ -61,18 +61,18 @@ func BindSchema(c *gin.Context, obj interface{}, bind binding.Binding) (err erro
 const SchemaResponseFile = `package schemas
 
 type SuccessResponse struct {
-	Status bool        ` + `json:"status"` + ` // 请求状态
-	Data   interface{} ` + `json:"data"` + `   // 响应数据体
+	Status bool        ` + "`" + `json:"status"` + "`" + ` // 请求状态
+	Data   interface{} ` + "`" + `json:"data"` + "`" + `   // 响应数据体
 }
 
 type ErrorResponse struct {
-	Status  bool   ` + `json:"status"` + `  // 状态
-	Message string ` + `json:"message"` + ` // 错误消息
+	Status  bool   ` + "`" + `json:"status"` + "`" + `  // 状态
+	Message string ` + "`" + `json:"message"` + "`" + ` // 错误消息
 }
 
 type QueryListResponse struct {
-	TotalCount  int64       ` + `json:"total_count"` + `  // 请求资源总计数
-	FilterCount int64       ` + `json:"filter_count"` + ` // 请求资源过滤计数
-	Records     interface{} ` + `json:"records"` + `      // 资源记录
+	TotalCount  int64       ` + "`" + `json:"total_count"` + "`" + `  // 请求资源总计数
+	FilterCount int64       ` + "`" + `json:"filter_count"` + "`" + ` // 请求资源过滤计数
+	Records     interface{} ` + "`" + `json:"records"` + "`" + `      // 资源记录
 }
 `

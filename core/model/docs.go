@@ -14,7 +14,7 @@ import (
 	"github.com/swaggo/swag"
 )
 
-var doc = ` + `{
+var doc = ` + "`" + `{
     "schemes": {{ marshal .Schemes }},
     "swagger": "2.0",
     "info": {
@@ -81,7 +81,7 @@ var doc = ` + `{
             }
         }
     }
-}` + `
+}` + "`" + `
 
 type swaggerInfo struct {
 	Version     string

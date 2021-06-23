@@ -1,10 +1,10 @@
 package model
 
-const MainCode = `package main
+const MainFile = `package main
 
 import (
-	"app/engine"
 	"app/public"
+	"app/server"
 	"net/http"
 	"time"
 
@@ -20,10 +20,10 @@ import (
 
 // @host 127.0.0.1:9404
 func main() {
-	if err := engine.LoadConfig("config.yaml"); err != nil {
+	if err := server.LoadConfig("config.yaml"); err != nil {
 		panic(err)
 	}
-	var engine = engine.InitEngine()
+	var engine = server.InitEngine()
 	server := &http.Server{
 		Addr:           ":" + public.Config.Server.RunPort,              // 监听地址
 		MaxHeaderBytes: 1 << 20,                                         // 1048576

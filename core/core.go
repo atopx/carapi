@@ -40,6 +40,7 @@ func Execute(name, output, remote string, vendor, docker, compose bool) (err err
 	os.MkdirAll(apppath, os.ModePerm)
 	write(apppath, "build.dockerfile", model.BuildDockerFile, &buf)
 	write(apppath, "local.dockerfile", model.LocalDockerFile, &buf)
+	write(apppath, "main.go", model.MainFile, &buf)
 
 	// api
 	var apipath = path.Join(rootpath, "services/app/api")
@@ -50,7 +51,7 @@ func Execute(name, output, remote string, vendor, docker, compose bool) (err err
 	var cfgpath = path.Join(rootpath, "services/app/config")
 	os.MkdirAll(cfgpath, os.ModePerm)
 	write(cfgpath, "config.go", model.ConfigGoFile, &buf)
-	write(apppath, "config.yml", model.ConfigYamlFile, &buf)
+	write(apppath, "config.yaml", model.ConfigYamlFile, &buf)
 
 	// core
 	var corepath = path.Join(rootpath, "services/app/core")
@@ -87,7 +88,7 @@ func Execute(name, output, remote string, vendor, docker, compose bool) (err err
 	write(pubpath, "variable.go", model.PublicVariableFile, &buf)
 
 	// routes
-	var routepath = path.Join(rootpath, "services/app/routes")
+	var routepath = path.Join(rootpath, "services/app/routers")
 	os.MkdirAll(routepath, os.ModePerm)
 	write(routepath, "test.go", model.RouterTestFile, &buf)
 
@@ -110,7 +111,22 @@ func Execute(name, output, remote string, vendor, docker, compose bool) (err err
 	write(rootpath, "docker-compose.local.yaml", model.DockerComposeLocalFile, &buf)
 	write(rootpath, "docker-compose.yaml", model.DockerComposeReleaseFile, &buf)
 
-	log.Println("Success!, cd xxxxx && go run main.go")
+	// go mod
+	cmd = exec.Command("go", "mod", "init", "app")
+	cmd.Dir = apppath
+	if err = cmd.Run(); err != nil {
+		return fmt.Errorf("go mod init error: %v", err)
+	}
+	cmd.Wait()
+
+	cmd = exec.Command("go", "mod", "tidy")
+	cmd.Dir = apppath
+	if err = cmd.Run(); err != nil {
+		return fmt.Errorf("go mod tidy error: %v", err)
+	}
+	cmd.Wait()
+
+	log.Println(fmt.Sprintf("Success!, cd %s && go run main.go", apppath))
 	return nil
 }
 
