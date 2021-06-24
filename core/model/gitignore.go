@@ -1,5 +1,6 @@
-ginhelper
-.idea/
+package model
+
+const GitIgnoreFile = `.idea/
 .vscode/
 
 # Binaries for programs and plugins
@@ -9,7 +10,7 @@ ginhelper
 *.so
 *.dylib
 
-# Test binary, built with `go test -c`
+# Test binary, built with ` + "`" + `go test -c` + "`" + `
 *.test
 
 # Output of the go coverage tool, specifically when used with LiteIDE
@@ -17,3 +18,4 @@ ginhelper
 
 # Dependency directories (remove the comment below to include it)
 vendor/
+`

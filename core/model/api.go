@@ -14,7 +14,7 @@ import (
 // @Tags 测试
 // @Success 200 {object} schemas.SuccessResponse
 // @Failure 400 {object} schemas.ErrorResponse
-// @Router /ping [get]
+// @Router /test/ping [get]
 func PingApi(c *gin.Context) {
 	c.JSON(200, schemas.SuccessResponse{Status: true, Data: "pong"})
 }

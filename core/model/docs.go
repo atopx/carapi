@@ -29,7 +29,7 @@ var doc = ` + "`" + `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/ping": {
+        "/test/ping": {
             "get": {
                 "description": "服务连通性测试接口",
                 "tags": [
@@ -143,7 +143,7 @@ const DocSwaggerJsonFile = `{
         "version": "1.0"
     },
     "paths": {
-        "/ping": {
+        "/test/ping": {
             "get": {
                 "description": "服务连通性测试接口",
                 "tags": [
@@ -224,7 +224,7 @@ info:
   title: ginhelper
   version: "1.0"
 paths:
-  /ping:
+  /test/ping:
     get:
 	  description: 服务连通性测试接口
 	  responses:

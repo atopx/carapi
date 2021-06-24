@@ -39,19 +39,12 @@ func init() {
 				Usage: "指定`GIT地址`",
 			},
 			&cli.BoolFlag{
-				Name:        "vendor",
-				Usage:       "automatic command 'go mod download'",
-				DefaultText: "true",
+				Name:  "docker",
+				Usage: "enable docker",
 			},
 			&cli.BoolFlag{
-				Name:        "docker",
-				Usage:       "enable docker",
-				DefaultText: "true",
-			},
-			&cli.BoolFlag{
-				Name:        "compose",
-				Usage:       "use docker compose file",
-				DefaultText: "true",
+				Name:  "compose",
+				Usage: "use docker compose",
 			},
 		},
 	}
@@ -62,7 +55,6 @@ func action(c *cli.Context) error {
 		c.String("name"),
 		c.String("output"),
 		c.String("remote"),
-		c.Bool("vendor"),
 		c.Bool("docker"),
 		c.Bool("compose"),
 	)
