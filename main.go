@@ -13,7 +13,7 @@ var app *cli.App
 const (
 	NAME    = "carapi"
 	USAGE   = "Create a scaffold for the gin framework"
-	VERSION = "0.1.0"
+	VERSION = "0.1.1"
 )
 
 func init() {
