@@ -20,16 +20,21 @@ var doc = ` + "`" + `{
     "info": {
         "description": "{{.Description}}",
         "title": "{{.Title}}",
+        "termsOfService": "http://swagger.io/terms/",
         "contact": {
             "name": "yanmengfei",
             "email": "3940422@qq.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
         },
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/test/ping": {
+        "/ping": {
             "get": {
                 "description": "服务连通性测试接口",
                 "tags": [
@@ -40,13 +45,229 @@ var doc = ` + "`" + `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/schemas.SuccessResponse"
+                            "$ref": "#/definitions/schema.SuccessResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/schemas.ErrorResponse"
+                            "$ref": "#/definitions/schema.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/task/create": {
+            "post": {
+                "description": "新建任务",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "任务管理"
+                ],
+                "summary": "新建",
+                "parameters": [
+                    {
+                        "description": "请求参数,字段说明点击model",
+                        "name": "param",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/schema.TaskCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schema.SuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/schema.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/task/delete": {
+            "delete": {
+                "description": "删除任务",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "任务管理"
+                ],
+                "summary": "删除",
+                "parameters": [
+                    {
+                        "description": "请求参数,字段说明点击",
+                        "name": "param",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/schema.TaskIDSchema"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schema.SuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/schema.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/task/done": {
+            "patch": {
+                "description": "标记任务完成",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "任务管理"
+                ],
+                "summary": "完成",
+                "parameters": [
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "default": 1,
+                        "description": "任务id",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schema.SuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/schema.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/task/list": {
+            "get": {
+                "description": "查询任务列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "任务管理"
+                ],
+                "summary": "列表",
+                "parameters": [
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "default": 1,
+                        "description": "请求页",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 50,
+                        "minimum": 1,
+                        "type": "integer",
+                        "default": 10,
+                        "description": "请求数",
+                        "name": "size",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "标题模糊搜索",
+                        "name": "title",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schema.SuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/schema.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/task/start": {
+            "patch": {
+                "description": "标记任务开始",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "任务管理"
+                ],
+                "summary": "开始",
+                "parameters": [
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "default": 1,
+                        "description": "任务id",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schema.SuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/schema.ErrorResponse"
                         }
                     }
                 }
@@ -54,35 +275,52 @@ var doc = ` + "`" + `{
         }
     },
     "definitions": {
-        "schemas.ErrorResponse": {
+        "schema.ErrorResponse": {
             "type": "object",
             "properties": {
                 "message": {
-                    "description": "错误消息",
                     "type": "string"
                 },
                 "status": {
-                    "description": "状态",
                     "type": "boolean"
                 }
             }
         },
-        "schemas.SuccessResponse": {
+        "schema.SuccessResponse": {
             "type": "object",
             "properties": {
                 "data": {
-                    "description": "响应数据体",
                     "type": "object"
                 },
                 "status": {
-                    "description": "请求状态",
                     "type": "boolean"
+                }
+            }
+        },
+        "schema.TaskCreate": {
+            "type": "object",
+            "required": [
+                "title"
+            ],
+            "properties": {
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "schema.TaskIDSchema": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
                 }
             }
         }
     }
 }` + "`" + `
-
 type swaggerInfo struct {
 	Version     string
 	Host        string
@@ -95,11 +333,11 @@ type swaggerInfo struct {
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = swaggerInfo{
 	Version:     "1.0",
-	Host:        "",
-	BasePath:    "",
+	Host:        "localhost:9000",
+	BasePath:    "/",
 	Schemes:     []string{},
-	Title:       "ginhelper",
-	Description: "ginhelper",
+	Title:       "carapi Example",
+	Description: "This is a sample swagger for carapi",
 }
 
 type s struct{}
@@ -134,16 +372,23 @@ func init() {
 const DocSwaggerJsonFile = `{
     "swagger": "2.0",
     "info": {
-        "description": "ginhelper",
-        "title": "ginhelper",
+        "description": "This is a sample swagger for carapi",
+        "title": "carapi Example",
+        "termsOfService": "http://swagger.io/terms/",
         "contact": {
             "name": "yanmengfei",
             "email": "3940422@qq.com"
         },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
         "version": "1.0"
     },
+    "host": "localhost:9000",
+    "basePath": "/",
     "paths": {
-        "/test/ping": {
+        "/ping": {
             "get": {
                 "description": "服务连通性测试接口",
                 "tags": [
@@ -154,13 +399,229 @@ const DocSwaggerJsonFile = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/schemas.SuccessResponse"
+                            "$ref": "#/definitions/schema.SuccessResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/schemas.ErrorResponse"
+                            "$ref": "#/definitions/schema.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/task/create": {
+            "post": {
+                "description": "新建任务",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "任务管理"
+                ],
+                "summary": "新建",
+                "parameters": [
+                    {
+                        "description": "请求参数,字段说明点击model",
+                        "name": "param",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/schema.TaskCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schema.SuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/schema.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/task/delete": {
+            "delete": {
+                "description": "删除任务",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "任务管理"
+                ],
+                "summary": "删除",
+                "parameters": [
+                    {
+                        "description": "请求参数,字段说明点击model",
+                        "name": "param",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/schema.TaskIDSchema"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schema.SuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/schema.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/task/done": {
+            "patch": {
+                "description": "标记任务完成",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "任务管理"
+                ],
+                "summary": "完成",
+                "parameters": [
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "default": 1,
+                        "description": "任务id",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schema.SuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/schema.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/task/list": {
+            "get": {
+                "description": "查询任务列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "任务管理"
+                ],
+                "summary": "列表",
+                "parameters": [
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "default": 1,
+                        "description": "请求页",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 50,
+                        "minimum": 1,
+                        "type": "integer",
+                        "default": 10,
+                        "description": "请求数",
+                        "name": "size",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "标题模糊搜索",
+                        "name": "title",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schema.SuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/schema.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/task/start": {
+            "patch": {
+                "description": "标记任务开始",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "任务管理"
+                ],
+                "summary": "开始",
+                "parameters": [
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "default": 1,
+                        "description": "任务id",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schema.SuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/schema.ErrorResponse"
                         }
                     }
                 }
@@ -168,76 +629,255 @@ const DocSwaggerJsonFile = `{
         }
     },
     "definitions": {
-        "schemas.ErrorResponse": {
+        "schema.ErrorResponse": {
             "type": "object",
             "properties": {
                 "message": {
-                    "description": "错误消息",
                     "type": "string"
                 },
                 "status": {
-                    "description": "状态",
                     "type": "boolean"
                 }
             }
         },
-        "schemas.SuccessResponse": {
+        "schema.SuccessResponse": {
             "type": "object",
             "properties": {
                 "data": {
-                    "description": "响应数据体",
                     "type": "object"
                 },
                 "status": {
-                    "description": "请求状态",
                     "type": "boolean"
+                }
+            }
+        },
+        "schema.TaskCreate": {
+            "type": "object",
+            "required": [
+                "title"
+            ],
+            "properties": {
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "schema.TaskIDSchema": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
                 }
             }
         }
     }
 }`
 
-const DocSwaggerYamlFile = `definitions:
-  schemas.ErrorResponse:
+const DocSwaggerYamlFile = `basePath: /
+definitions:
+  schema.ErrorResponse:
     properties:
-	  message:
-	    description: 错误消息
-	    type: string
-	  status:
-	    description: 状态
-	    type: boolean
+      message:
+        type: string
+      status:
+        type: boolean
     type: object
-  schemas.SuccessResponse:
+  schema.SuccessResponse:
     properties:
-	  data:
-	    description: 响应数据体
-	    type: object
-	  status:
-	    description: 请求状态
-	    type: boolean
+      data:
+        type: object
+      status:
+        type: boolean
     type: object
+  schema.TaskCreate:
+    properties:
+      title:
+        type: string
+    required:
+    - title
+    type: object
+  schema.TaskIDSchema:
+    properties:
+      id:
+        type: integer
+    required:
+    - id
+    type: object
+host: localhost:9000
 info:
   contact:
     email: 3940422@qq.com
     name: yanmengfei
-  description: ginhelper
-  title: ginhelper
+  description: This is a sample swagger for carapi
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: carapi Example
   version: "1.0"
 paths:
-  /test/ping:
+  /ping:
     get:
-	  description: 服务连通性测试接口
-	  responses:
-	    "200":
-		  description: OK
-		  schema:
-		    $ref: '#/definitions/schemas.SuccessResponse'
-	    "400":
-		  description: Bad Request
-		  schema:
-		    $ref: '#/definitions/schemas.ErrorResponse'
-	  summary: 服务连通性测试
-	  tags:
-	    - 测试
+      description: 服务连通性测试接口
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schema.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schema.ErrorResponse'
+      summary: 服务连通性测试
+      tags:
+      - 测试
+  /task/create:
+    post:
+      consumes:
+      - application/json
+      description: 新建任务
+      parameters:
+      - description: 请求参数,字段说明点击model
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/schema.TaskCreate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schema.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schema.ErrorResponse'
+      summary: 新建
+      tags:
+      - 任务管理
+  /task/delete:
+    delete:
+      consumes:
+      - application/json
+      description: 删除任务
+      parameters:
+      - description: 请求参数,字段说明点击model
+        in: body
+        name: param
+        required: true
+        schema:
+          $ref: '#/definitions/schema.TaskIDSchema'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schema.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schema.ErrorResponse'
+      summary: 删除
+      tags:
+      - 任务管理
+  /task/done:
+    patch:
+      consumes:
+      - application/json
+      description: 标记任务完成
+      parameters:
+      - default: 1
+        description: 任务id
+        in: query
+        minimum: 1
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schema.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schema.ErrorResponse'
+      summary: 完成
+      tags:
+      - 任务管理
+  /task/list:
+    get:
+      consumes:
+      - application/json
+      description: 查询任务列表
+      parameters:
+      - default: 1
+        description: 请求页
+        in: query
+        minimum: 1
+        name: page
+        required: true
+        type: integer
+      - default: 10
+        description: 请求数
+        in: query
+        maximum: 50
+        minimum: 1
+        name: size
+        required: true
+        type: integer
+      - description: 标题模糊搜索
+        in: query
+        name: title
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schema.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schema.ErrorResponse'
+      summary: 列表
+      tags:
+      - 任务管理
+  /task/start:
+    patch:
+      consumes:
+      - application/json
+      description: 标记任务开始
+      parameters:
+      - default: 1
+        description: 任务id
+        in: query
+        minimum: 1
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schema.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schema.ErrorResponse'
+      summary: 开始
+      tags:
+      - 任务管理
 swagger: "2.0"
 `

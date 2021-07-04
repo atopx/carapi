@@ -1,7 +1,7 @@
 package main
 
 import (
-	"ginhelper/core"
+	"carapi/core"
 	"log"
 	"os"
 
@@ -11,7 +11,7 @@ import (
 var app *cli.App
 
 const (
-	NAME    = "ginhelper"
+	NAME    = "carapi"
 	USAGE   = "Create a scaffold for the gin framework"
 	VERSION = "0.1.0"
 )
@@ -28,6 +28,16 @@ func init() {
 				Aliases:  []string{"n"},
 				Usage:    "指定`项目名称`",
 				Required: true,
+			},
+			&cli.StringFlag{
+				Name:  "frame",
+				Usage: "选择`框架`, 目前支持[gin fiber], 默认gin",
+				Value: "gin",
+			},
+			&cli.StringFlag{
+				Name:  "db",
+				Usage: "选择`数据库`, 目前支持[pgsql mysql], 默认pgsql",
+				Value: "pgsql",
 			},
 			&cli.StringFlag{
 				Name:    "output",
@@ -55,6 +65,7 @@ func action(c *cli.Context) error {
 		c.String("name"),
 		c.String("output"),
 		c.String("remote"),
+		c.String("frame"),
 		c.Bool("docker"),
 		c.Bool("compose"),
 	)

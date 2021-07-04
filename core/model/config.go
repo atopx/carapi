@@ -1,6 +1,6 @@
 package model
 
-const ConfigGoFile = `package config
+const GinConfigGoFile = `package config
 
 import (
 	"time"
@@ -8,77 +8,132 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-type Cfg struct {
-	Server   ServerConfig   ` + "`" + `yaml:"server"` + "`" + `
-	Database DatabaseConfig ` + "`" + `yaml:"database"` + "`" + `
-	Logger   LoggerConfig   ` + "`" + `yaml:"logger"` + "`" + `
-	Common   CommonConfig   ` + "`" + `yaml:"common"` + "`" + `
+type Config struct {
+	Server   Server      ` + "`" + `toml:"server"` + "`" + `
+	Database Database    ` + "`" + `toml:"database"` + "`" + `
+	Logger   Logger      ` + "`" + `toml:"logger"` + "`" + `
+	Common   Common      ` + "`" + `toml:"common"` + "`" + `
 }
 
-type CommonConfig struct {
-	SentryDSN    string ` + "`" + `yaml:"sentry_dsn"` + "`" + `
-	SwaggerHost string ` + "`" + `yaml:"swagger_host"` + "`" + `
+type Common struct {
+	SentryDSN   string    ` + "`" + `toml:"sentry_dsn"` + "`" + `
+	SwaggerHost string    ` + "`" + `toml:"swagger_host"` + "`" + `
 }
 
-type ServerConfig struct {
-	RunMode      string        ` + "`" + `yaml:"run_mode"` + "`" + `
-	RunPort      string        ` + "`" + `yaml:"run_port"` + "`" + `
-	ReadTimeout  time.Duration ` + "`" + `yaml:"read_timeout"` + "`" + `
-	WriteTimeout time.Duration ` + "`" + `yaml:"write_timeout"` + "`" + `
+type Server struct {
+	Mode         string        ` + "`" + `toml:"mode"` + "`" + `
+	Port         string        ` + "`" + `toml:"port"` + "`" + `
+	ReadTimeout  time.Duration ` + "`" + `toml:"read_timeout"` + "`" + `
+	WriteTimeout time.Duration ` + "`" + `toml:"write_timeout"` + "`" + `
 }
 
-type LoggerConfig struct {
-	MaxSize   int    ` + "`" + `yaml:"maxsize"` + "`" + `
-	MaxAge    int    ` + "`" + `yaml:"maxage"` + "`" + `
-	MaxBackup int    ` + "`" + `yaml:"max_backup"` + "`" + `
-	Level     string ` + "`" + `yaml:"level"` + "`" + `
-	Filepath  string ` + "`" + `yaml:"filepath"` + "`" + `
+type Database struct {
+	User          string          ` + "`" + `toml:"user"` + "`" + `
+	Password      string          ` + "`" + `toml:"password"` + "`" + `
+	DBName        string          ` + "`" + `toml:"dbname"` + "`" + `
+	Host          string          ` + "`" + `toml:"host"` + "`" + `
+	Port          int             ` + "`" + `toml:"port"` + "`" + `
+	MaxIdleConn   int             ` + "`" + `toml:"max_idle_conn"` + "`" + `
+	MaxOpenConn   int             ` + "`" + `toml:"max_open_conn"` + "`" + `
+	LogLevel      logger.LogLevel ` + "`" + `toml:"log_level"` + "`" + `
+	SlowThreshold time.Duration   ` + "`" + `toml:"threshold"` + "`" + `
 }
 
-type DatabaseConfig struct {
-	Host                 string          ` + "`" + `yaml:"host"` + "`" + `
-	Port                 string          ` + "`" + `yaml:"port"` + "`" + `
-	DbName               string          ` + "`" + `yaml:"db_name"` + "`" + `
-	SSLMode              string          ` + "`" + `yaml:"sslmode"` + "`" + `
-	TimeZone             string          ` + "`" + `yaml:"timezone"` + "`" + `
-	Username             string          ` + "`" + `yaml:"username"` + "`" + `
-	Password             string          ` + "`" + `yaml:"password"` + "`" + `
-	PreferSimpleProtocol bool            ` + "`" + `yaml:"prefer_simple_protocol"` + "`" + `
-	MaxIdleConns         int             ` + "`" + `yaml:"max_idle_conns"` + "`" + `
-	MaxOpenConns         int             ` + "`" + `yaml:"max_open_conns"` + "`" + `
-	LogLevel             logger.LogLevel ` + "`" + `yaml:"log_level"` + "`" + `
-	SlowThreshold        time.Duration   ` + "`" + `yaml:"slow_threshold"` + "`" + `
+type Logger struct {
+	MaxSize   int    ` + "`" + `toml:"maxsize"` + "`" + `
+	MaxAge    int    ` + "`" + `toml:"maxage"` + "`" + `
+	MaxBackup int    ` + "`" + `toml:"backup"` + "`" + `
+	Level     string ` + "`" + `toml:"level"` + "`" + `
+	Filepath  string ` + "`" + `toml:"filepath"` + "`" + `
 }
 `
 
-const ConfigYamlFile = `server:
-  run_mode: 'debug'
-  run_port: '9404'
-  read_timeout: 60
-  write_timeout: 60
+const GinConfigTomlFile = `[server]
+mode = "debug"
+port = "9000"
+read_timeout = 60
+write_timeout = 60
 
-common:
-  sentry_dsn: ''
-  swagger_host: '127.0.0.1'
+[common]
+swagger_host = "127.0.0.1"
 
-logger:
-  maxsize: 100
-  max_age: 7
-  level: debug
-  max_backup: 1
-  filepath: logs/app.log
+[database]
+user = "postgres"
+password = "postgres"
+dbname = "todo"
+host = "172.20.88.240"
+port = 5432
+max_idle_conn = 10
+max_open_conn = 20
+log_level = 2
+threshold = 1000
 
-database:
-  host: 127.0.0.1
-  port: 5432
-  db_name: ginhelper
-  username: postgres
-  password: postgres
-  sslmode: disable
-  timezone: Asia/Shanghai
-  prefer_simple_protocol: true
-  max_idle_conns: 10
-  max_open_conns: 20
-  log_level: 3   # 1:silent, 2:error, 3:warn; 4:info
-  slow_threshold: 1000 # 慢SQL记录(毫秒)
+[logger]
+maxsize = 100
+maxage = 7
+backup = 10
+level = "debug"
+filepath = "logs/app.log"
+`
+
+const FiberConfigGoFile = `package config
+
+import (
+	"gorm.io/gorm/logger"
+	"time"
+)
+
+type Config struct {
+	Server   Server   ` + "`" + `toml:"server"` + "`" + `
+	Database Database ` + "`" + `toml:"database"` + "`" + `
+	Logger   Logger   ` + "`" + `toml:"logger"` + "`" + `
+}
+
+type Server struct {
+	Mode string ` + "`" + `toml:"mode"` + "`" + `
+	Port int    ` + "`" + `toml:"port"` + "`" + `
+}
+
+type Database struct {
+	User          string          ` + "`" + `toml:"user"` + "`" + `
+	Password      string          ` + "`" + `toml:"password"` + "`" + `
+	DBName        string          ` + "`" + `toml:"dbname"` + "`" + `
+	Host          string          ` + "`" + `toml:"host"` + "`" + `
+	Port          int             ` + "`" + `toml:"port"` + "`" + `
+	MaxIdleConn   int             ` + "`" + `toml:"max_idle_conn"` + "`" + `
+	MaxOpenConn   int             ` + "`" + `toml:"max_open_conn"` + "`" + `
+	LogLevel      logger.LogLevel ` + "`" + `toml:"log_level"` + "`" + `
+	SlowThreshold time.Duration   ` + "`" + `toml:"threshold"` + "`" + `
+}
+
+type Logger struct {
+	MaxSize   int    ` + "`" + `toml:"maxsize"` + "`" + `
+	MaxAge    int    ` + "`" + `toml:"maxage"` + "`" + `
+	MaxBackup int    ` + "`" + `toml:"backup"` + "`" + `
+	Level     string ` + "`" + `toml:"level"` + "`" + `
+	Filepath  string ` + "`" + `toml:"filepath"` + "`" + `
+}
+`
+
+const FiberConfigTomlFile = `[server]
+mode = "debug"
+port = 9000
+
+[database]
+user = "postgres"
+password = "postgres"
+dbname = "todo"
+host = "172.20.88.240"
+port = 5432
+max_idle_conn = 10
+max_open_conn = 20
+log_level = 2
+threshold = 1000
+
+[logger]
+maxsize = 100
+maxage = 7
+backup = 10
+level = "debug"
+filepath = "logs/app.log"
 `

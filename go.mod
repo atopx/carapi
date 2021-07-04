@@ -1,4 +1,4 @@
-module ginhelper
+module carapi
 
 go 1.16
 

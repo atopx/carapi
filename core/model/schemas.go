@@ -1,78 +1,177 @@
 package model
 
-const SchemaCommonFile = `package schemas
+const GinSchemaCommonFile = `package schema
 
 import (
-	"encoding/json"
-	"fmt"
-	"net/http"
-	"strings"
-
+	"github.com/go-playground/locales/zh_Hans_CN"
+	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
+	"github.com/go-playground/validator/v10/translations/zh"
 	"go.uber.org/zap"
+	"net/http"
+	"reflect"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 )
 
-// registerValidatorRule 注册参数验证错误消息, Key = e.StructNamespace(), value.key = e.Field()+e.Tag()
-var registerValidatorRule = map[string]map[string]string{}
+var validate *validator.Validate
+var trans ut.Translator
 
-// serializeValidatorError 参数tag验证失败转换
-func serializeValidatorError(e validator.FieldError) (message string) {
-	switch e.Field() {
-	default:
-		message = registerValidatorRule[strings.Split(e.StructNamespace(), ".")[0]][e.Field()+e.Tag()]
-	case "Page", "Size":
-		switch e.Tag() {
-		case "min":
-			message = e.Field() + "最小值为" + e.Param()
-		case "max":
-			message = e.Field() + "最大值为" + e.Param()
-		}
+func init() {
+	// 初始化翻译器
+	trans, _ = ut.New(zh_Hans_CN.New()).GetTranslator("zh")
+	validate = validator.New()
+	validate.RegisterTagNameFunc(func(fld reflect.StructField) string {
+		return fld.Tag.Get("label")
+	})
+	if err := zh.RegisterDefaultTranslations(validate, trans); err != nil {
+		zap.L().Error("register validator failed", zap.Error(err))
 	}
-	return message
 }
 
-// serializeTypeError 参数类型错误转换
-func serializeTypeError(e *json.UnmarshalTypeError) string {
-	return fmt.Sprintf("参数%s类型错误, 预期%s, 接收到%s", e.Field, e.Type, e.Value)
+// Validator 参数验证器
+func Validator(data interface{}, c *gin.Context, b binding.Binding) (err error) {
+	if err = c.ShouldBindWith(data, b); err != nil {
+		c.JSON(http.StatusBadRequest, ErrorResponse{Message: err.Error()})
+		return err
+	}
+	if err = validate.Struct(data); err != nil {
+		c.JSON(http.StatusBadRequest, ErrorResponse{Message: err.(validator.ValidationErrors)[0].Translate(trans)})
+		return err
+	}
+	return nil
 }
 
-// BindSchema 绑定单类型的请求参数
-func BindSchema(c *gin.Context, obj interface{}, bind binding.Binding) (err error) {
-	if err = c.ShouldBindWith(obj, bind); err != nil {
-		var response ErrorResponse
-		switch err := err.(type) {
-		case *json.UnmarshalTypeError:
-			response.Message = serializeTypeError(err)
-		case validator.ValidationErrors:
-			response.Message = serializeValidatorError(err[0])
-		default:
-			response.Message = "无效的请求参数"
-		}
-		zap.L().Error(response.Message, zap.Error(err))
-		c.JSON(http.StatusBadRequest, response)
-	}
-	return err
+// SuccessResponse 完成响应结构体
+type SuccessResponse struct {
+	Status bool        ` + "`" + `json:"status"` + "`" + `
+	Data   interface{} ` + "`" + `json:"data"` + "`" + `
+}
+
+// ErrorResponse 错误响应结构体
+type ErrorResponse struct {
+	Status  bool   ` + "`" + `json:"status"` + "`" + `
+	Message string ` + "`" + `json:"message"` + "`" + `
+}
+
+// QueryListSchema 列表查询结构体
+type QueryListSchema struct {
+	TotalCount  int64       ` + "`" + `json:"total_count"` + "`" + `  // 请求资源总计数
+	FilterCount int64       ` + "`" + `json:"filter_count"` + "`" + ` // 请求资源过滤计数
+	Records     interface{} ` + "`" + `json:"records"` + "`" + `      // 资源列表数据
 }
 `
 
-const SchemaResponseFile = `package schemas
+const FiberSchemaCommonFile = `package schema
 
+import (
+	"github.com/go-playground/locales/zh_Hans_CN"
+	ut "github.com/go-playground/universal-translator"
+	"github.com/go-playground/validator/v10"
+	"github.com/go-playground/validator/v10/translations/zh"
+	"github.com/gofiber/fiber/v2"
+	"go.uber.org/zap"
+	"reflect"
+)
+
+var validate *validator.Validate
+var trans ut.Translator
+
+type BindSchema uint8
+
+const (
+	Json BindSchema = iota
+	Query
+)
+
+func init() {
+	// 初始化翻译器
+	trans, _ = ut.New(zh_Hans_CN.New()).GetTranslator("zh")
+	validate = validator.New()
+	validate.RegisterTagNameFunc(func(fld reflect.StructField) string {
+		return fld.Tag.Get("label")
+	})
+	if err := zh.RegisterDefaultTranslations(validate, trans); err != nil {
+		zap.L().Error("register validator failed", zap.Error(err))
+	}
+}
+
+// Validator 参数验证器
+func Validator(data interface{}, c *fiber.Ctx, t BindSchema) (bindErr error, err error) {
+	switch t {
+	case Json:
+		err = c.BodyParser(data)
+	case Query:
+		err = c.QueryParser(data)
+	}
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(
+			ErrorResponse{Message: err.Error()}), err
+	}
+	if err = validate.Struct(data); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(ErrorResponse{
+			Message: err.(validator.ValidationErrors)[0].Translate(trans)}), err
+	}
+	return nil, nil
+}
+
+// SuccessResponse 完成响应结构体
 type SuccessResponse struct {
-	Status bool        ` + "`" + `json:"status"` + "`" + ` // 请求状态
-	Data   interface{} ` + "`" + `json:"data"` + "`" + `   // 响应数据体
+	Status bool        ` + "`" + `json:"status"` + "`" + `
+	Data   interface{} ` + "`" + `json:"data"` + "`" + `
 }
 
+// ErrorResponse 错误响应结构体
 type ErrorResponse struct {
-	Status  bool   ` + "`" + `json:"status"` + "`" + `  // 状态
-	Message string ` + "`" + `json:"message"` + "`" + ` // 错误消息
+	Status  bool   ` + "`" + `json:"status"` + "`" + `
+	Message string ` + "`" + `json:"message"` + "`" + `
 }
 
-type QueryListResponse struct {
+// QueryListSchema 列表查询结构体
+type QueryListSchema struct {
 	TotalCount  int64       ` + "`" + `json:"total_count"` + "`" + `  // 请求资源总计数
 	FilterCount int64       ` + "`" + `json:"filter_count"` + "`" + ` // 请求资源过滤计数
-	Records     interface{} ` + "`" + `json:"records"` + "`" + `      // 资源记录
+	Records     interface{} ` + "`" + `json:"records"` + "`" + `      // 资源列表数据
+}
+`
+
+const GinSchemaTaskFile = `package schema
+
+// TaskCreate 创建任务请求参数
+type TaskCreate struct {
+	Title string ` + "`" + `json:"title" validate:"required,min=4,max=100" label:"任务标题"` + "`" + `
+}
+
+// TaskList 任务列表请求参数
+type TaskList struct {
+	Page  int ` + "`" + `form:"page" validate:"required,min=1" label:"请求页码"` + "`" + `
+	Size  int ` + "`" + `form:"size" validate:"required,min=1,max=50" label:"请求数量"` + "`" + `
+	Title string
+}
+
+// TaskIDSchema 任务ID公用请求参数
+type TaskIDSchema struct {
+	ID uint ` + "`" + `json:"id" form:"id" validate:"required"` + "`" + `
+}
+`
+
+const FiberSchemaTaskFile = `package schema
+
+// TaskCreate 创建任务请求参数
+type TaskCreate struct {
+	Title string ` + "`" + `json:"title" validate:"required,min=4,max=100" label:"任务标题"` + "`" + `
+}
+
+// TaskList 任务列表请求参数
+type TaskList struct {
+	Page  int ` + "`" + `json:"page" validate:"required,min=1" label:"请求页码"` + "`" + `
+	Size  int ` + "`" + `json:"size" validate:"required,min=1,max=50" label:"请求数量"` + "`" + `
+	Title string
+}
+
+// TaskIDSchema 任务ID公用请求参数
+type TaskIDSchema struct {
+	ID uint ` + "`" + `json:"id" validate:"required"` + "`" + `
 }
 `

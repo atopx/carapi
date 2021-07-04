@@ -9,7 +9,7 @@ cat >docker-compose.build.yml <<EOF
 version: '3.7'
 services:
   app:
-    image: ginhelper:${APPTAG}
+    image: carapi:${APPTAG}
     build:
       context: services/app
       dockerfile: build.dockerfile
@@ -22,7 +22,7 @@ read -r -p "是否构建镜像 [Y/N]: " input
 case ${input} in
 [yY][eE][sS] | [yY])
   docker-compose -f docker-compose.build.yml build
-  echo -e "Success ==> ginhelper:${APPTAG}"
+  echo -e "Success ==> carapi:${APPTAG}"
   ;;
 [nN][oO] | [nN])
   echo -e "Stop!"
@@ -40,8 +40,8 @@ version: '3.7'
 
 services:
   app:
-    container_name: ginhelper
-    image: ginhelper:${APPTAG}
+    container_name: carapi
+    image: carapi:${APPTAG}
     restart: always
     volumes:
       - './logs:/logs'
