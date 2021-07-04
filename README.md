@@ -9,7 +9,9 @@
 
 
 > 自动生成Go RestfulAPI企业级项目脚手架代码，基于最佳实践
+> 
 > 真正实现专注于业务逻辑的快速开发
+> 
 > - 没有框架 == 爬着开发
 > - 有了框架 == 走着开发
 > - 复用项目 == 跑了起来
@@ -19,15 +21,15 @@
 
 ### 框架
 
--[x] gin
--[x] fiber
--[ ] iris
--[ ] beego
+- [x] gin
+- [x] fiber
+- [ ] iris
+- [ ] beego
 
 ### 数据库
 
--[x] posgresql
--[ ] mysql
+- [x] posgresql
+- [ ] mysql
 
 ## 工具使用
 
