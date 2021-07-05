@@ -28,7 +28,7 @@
 
 ### 数据库
 
-- [x] posgresql
+- [x] postgresql
 - [ ] mysql
 
 ## 工具使用
